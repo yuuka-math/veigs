@@ -26,18 +26,42 @@ Quick usage
 
 Exmaple 1 - Hilbert matrix
 ```matlab
+% Example 1:
 n = 8;
 A = eye(n);
 B = infsup(hilb(n)-1E-13, hilb(n)+1E-13);
 
-% Find eigenvalue(s) near 0.1
-[bounds, ind] = veigs(A, B, 0.1);
+try
+    % Eigenvalues near 3.5 (request 3 eigenvalue near sigma = 3.5)
+    [bounds, ind] = veigs(A, B, 3, 3.5);
+    fprintf("Eigenvalue(s) near 3.5 (indices: %s)\n", mat2str(ind));
+    arrayfun(@(a,b) fprintf("  lower = %.15g, upper = %.15g\n", a, b), inf(bounds), sup(bounds));
 
-% Smallest real
-[bounds, ind] = veigs(A, B, 1, 'sa');
+    % Smallest real eigenvalue
+    [bounds, ind] = veigs(A, B, 1, 'sa');
+    fprintf("Smallest real (indices: %s)\n", mat2str(ind));
+    arrayfun(@(a,b) fprintf("  lower = %.15g, upper = %.15g\n", a, b), inf(bounds), sup(bounds));
 
-% Largest real
-[bounds, ind] = veigs(A, B, 1, 'la');
+    % Largest real eigenvalue
+    [bounds, ind] = veigs(A, B, 1, 'la');
+    fprintf("Largest real (indices: %s)\n", mat2str(ind));
+    arrayfun(@(a,b) fprintf("  lower = %.15g, upper = %.15g\n", a, b), inf(bounds), sup(bounds));
+catch ME
+    fprintf("Error running example: %s\n", ME.message);
+    fprintf("Ensure INTLAB is installed and initialized.\n");
+end
+```
+
+Output
+```console
+Eigenvalue(s) near 3.5 (indices: [1 2 3])
+  lower = 0.589643850288603, upper = 0.589643850289016
+  lower = 3.35429531632129, upper = 3.35429531633695
+  lower = 38.1492376817517, upper = 38.1492376835712
+Smallest real (indices: 1)
+  lower = 0.589643850288603, upper = 0.589643850289016
+Largest real (indices: 8)
+  lower = 8963150992.40563, upper = 9029922118.19569
 ```
 
 Example 2 — banded test
@@ -50,7 +74,16 @@ A = A + diag( ones(n-2,1),2) + diag( ones(n-2,1),-2);
 B = hilb(n) * 232792560;
 
 % Largest eigenvalue verified bounds
-[bound, ind] = veigs(A, B, 1,'la');
+[bounds, ind] = veigs(A, B, 5,'la');
+arrayfun(@(a,b) fprintf("  lower = %.15g, upper = %.15g\n", a, b), inf(bounds), sup(bounds));
+```
+Output
+```console
+  lower = 0.00333832070468501, upper = 0.00333832070499474
+  lower = 0.191995342376582, upper = 0.19199534288305
+  lower = 15.6094796620753, upper = 15.6094817202553
+  lower = 2014.63063143566, upper = 2014.65296932523
+  lower = 550115.445510997, upper = 551048.301519021
 ```
 
 Notes

@@ -65,7 +65,7 @@ switch numel(varargin)
         if ischar(v3) || (isstring(v3) && isscalar(v3))
             % Old style: veigs(A,B,SIGMA), NumOfEigs  = 1
             SIGMA = char(v3);
-        elseif isnumeric(v3) && isscalar(v3)
+        elseif isnumeric(v3) && isscalar(v3) && isinteger(v3)
             % New style: veigs(A,B,NumOfEigs), SIGMA = 'lm'
             NumOfEigs = v3;
         else
@@ -78,13 +78,13 @@ switch numel(varargin)
         %   veigs(A,B,NumOfEigs,K)
         % ---------------------------
         if isnumeric(v3) && isscalar(v3) && isnumeric(v4) && isscalar(v4)
-            NumOfEigs = v3;SIGMA = v4;
+            NumOfEigs = v3; SIGMA = v4;
             % ---------------------------
             % Case 2: (numeric , string)
             %   New style: veigs(A,B,5,'sa')
             % ---------------------------
         elseif isnumeric(v3) && isscalar(v3) && (ischar(v4) || (isstring(v4)&&isscalar(v4)))
-            NumOfEigs = v3;SIGMA = char(v4);
+            NumOfEigs = v3; SIGMA = char(v4);
         else
             error('3rd and 4th args must be NumOfEigs,SIGMA.');
         end
