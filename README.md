@@ -24,7 +24,8 @@ Quick usage
 [lambdas, ind_range] = veigs(A, B, NumOfEigs, SIGMA)
 ```
 
-% Exmaple 1:
+Exmaple 1 - Hilbert matrix
+```matlab
 n = 8;
 A = eye(n);
 B = infsup(hilb(n)-1E-13, hilb(n)+1E-13);
@@ -37,7 +38,7 @@ B = infsup(hilb(n)-1E-13, hilb(n)+1E-13);
 
 % Largest real
 [bounds, ind] = veigs(A, B, 1, 'la');
-
+```
 
 Example 2 — banded test
 ```matlab
