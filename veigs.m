@@ -107,9 +107,9 @@ SIGMA_min    = 0;
 
 % Number of approximate eigenvalues required in calling EIGS.
 if NumOfEigs == 1
-    EigNum = min(10, size(A,1)-1);
+    EigNum = min(10, size(A,1));
 else
-    EigNum = min(size(A,1)-1, NumOfEigs+2);
+    EigNum = min(size(A,1), NumOfEigs+2);
 end
 
 % Normalize old shorthand -> new keywords (for name-value usage)

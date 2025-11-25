@@ -188,13 +188,14 @@ while index <= max_ind
 
             tmp = intval(err_est)*B + diff_m;
             is_positive = is_positive * isspd(hull(tmp,tmp'));
+            k = k+1;
         end
 
         if is_positive < 1
             error('Failure in LDL-based positive definiteness check (lower bound).');
         end
 
-        lambda_lower = inf(lambda_test - err_est);
+        lambda_lower = lambda_test - err_est;
     end
 
     %% ------------------------------------------------------------
@@ -224,17 +225,18 @@ while index <= max_ind
 
             tmp = intval(err_est)*B + diff_m;
             is_positive = is_positive * isspd(hull(tmp,tmp'));
+            k = k+1;
         end
 
         if is_positive < 1
             error('Failure in LDL-based positive definiteness check (upper bound).');
         end
 
-        lambda_upper = sup(lambda_test + err_est);
+        lambda_upper = lambda_test + err_est;
     end
 
     %% Store bound
-    eig_bound = infsup(lambda_lower, lambda_upper);
+    eig_bound = hull(lambda_lower, lambda_upper);
 
     index_range = (neg_num_low+1):neg_zero_num_upper;
 
@@ -242,7 +244,7 @@ while index <= max_ind
         min_ind = neg_num_low+1;
     end
 
-    eig_bounds(index_range - min_ind + 1, 1) = eig_bound;
+    eig_bounds(index_range - min_ind + 1) = eig_bound;
 
     index = neg_zero_num_upper + 1;
 
