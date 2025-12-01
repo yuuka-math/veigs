@@ -461,6 +461,7 @@ if ( global_s - global_r ~= s - r  || global_s < 0 || global_r > size(A,1) )
         upper_bound = V(:,1)'*intval(A)*V(:,1)/(V(:,1)'*intval(B)*V(:,1));
         lambda    = [ hull( global_rho, upper_bound);  hull( lower_bound, global_sigma) ];
         ind_range = [1, size(A,1)];
+        local_ind_range = [1, size(A,1)];
         return
     end
 
@@ -468,6 +469,7 @@ if ( global_s - global_r ~= s - r  || global_s < 0 || global_r > size(A,1) )
         lower_bound = V(:,m)'*intval(A)*V(:,m)/(V(:,m)'*intval(B)*V(:,m));
         lambda    = infsup( lower_bound.inf, global_sigma);
         ind_range = size(A,1);
+        local_ind_range = ind_range;        
         return
     end
 
@@ -475,6 +477,7 @@ if ( global_s - global_r ~= s - r  || global_s < 0 || global_r > size(A,1) )
         upper_bound = V(:,1)'*intval(A)*V(:,1)/(V(:,1)'*intval(B)*V(:,1));
         lambda    = infsup( global_rho, upper_bound.sup);
         ind_range = 1;
+        local_ind_range = ind_range;        
         return
     end
 end
