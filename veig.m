@@ -170,8 +170,7 @@ while index <= max_ind
     E      = A - lambda_test*B;
 
     diff_m     = P*L*D*(L')*P' - E;
-    diff_m_mid = P*L*D*(L')*P' - mid(E);
-    diff_m_inf = norm(sup(abs(diff_m_mid)),'inf');
+    diff_m_inf = norm(sup(abs(diff_m)),'inf');
 
     if diff_m_inf == 0
         lambda_lower = lambda_test;
@@ -207,8 +206,7 @@ while index <= max_ind
     E      = A - lambda_test*B;
 
     diff_m     = P*L*D*(L')*P' - E;
-    diff_m_mid = P*L*D*(L')*P' - mid(E);
-    diff_m_inf = norm(sup(abs(diff_m_mid)),'inf');
+    diff_m_inf = norm(sup(abs(diff_m)),'inf');
 
     if diff_m_inf == 0
         lambda_upper = lambda_test;
