@@ -166,6 +166,10 @@ global_r = size(A,1)+1;
 % Compute rough lower bound for B and norm of A
 [~,lambda_B_min] = eigs(mid(B),1,'smallestabs');
 lambda_B_min = veigs_RoughLower(B, speye(size(B)), lambda_B_min, lambda_B_min/2);
+if ~isfinite(lambda_B_min) || lambda_B_min <= 0
+    error('veigs:UnsafeScale', ...
+        'Could not certify a positive finite lower bound for B.');
+end
 A_inf_norm = norm(sup(abs(A)),'inf');
 lambda_rough_min = -A_inf_norm / lambda_B_min;
 lambda_rough_max =  A_inf_norm / lambda_B_min;
