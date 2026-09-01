@@ -332,7 +332,9 @@ if direction_right == 1
     else
         % Compare PLDL'P' vs. (A - lambda B) to estimate the interval radius
         diff_m  = P*intval(L)*intval(D)*intval(L')*P' - tmpM; % (not exactly symmetric, hull used)
-        err_est = norm( sup(abs(diff_m)),'inf') / lambda_B_min;
+        err_seed = max(eps(max(abs(lambda),1)), ...
+            norm(sup(abs(diff_m)),'inf') / lambda_B_min);
+        err_est = veigs_CertifiedOneSidedRadius(B,diff_m,err_seed);
 
         % Reduce the error estimate iteratively, ensuring positivity of
         %   err_est * B - ( PLDL'P' - (A - lambda B) )
@@ -409,7 +411,9 @@ if direction_left == 1
     else
         % Error radius via difference of factorization and original
         diff_m  =  tmpM - P*intval(L)*intval(D)*intval(L')*P';
-        err_est = norm( sup(abs(diff_m)),'inf') / lambda_B_min;
+        err_seed = max(eps(max(abs(lambda),1)), ...
+            norm(sup(abs(diff_m)),'inf') / lambda_B_min);
+        err_est = veigs_CertifiedOneSidedRadius(B,diff_m,err_seed);
 
         if ( err_est > (1-lambda_ratio) * ( eig_list(r) - eig_pre ) )
             is_positive = 1;
@@ -509,6 +513,33 @@ lambda = Lehmann_Behnke__(A,B, eig_list, V, global_rho, global_sigma, lambda_B_m
 ind_range       = global_r:1:global_s;
 local_ind_range = r:s;
 
+end
+
+
+%% =======================================================================
+%%  Subfunction: Certified one-sided LDL residual radius
+%% =======================================================================
+function err_est = veigs_CertifiedOneSidedRadius(B,diff_m,err_seed)
+% Certify err_est*B-diff_m positive definite; the norm is only a seed.
+if ~isfinite(err_seed) || err_seed <= 0
+    error('veigs:VerificationFailure', ...
+        'A positive finite separator-radius seed is required.');
+end
+
+err_est = err_seed;
+for k = 0:53
+    residual = intval(err_est)*intval(B) - diff_m;
+    if isspd(hull(residual,residual'))
+        return;
+    end
+    if err_est > realmax/2
+        break;
+    end
+    err_est = err_est*2;
+end
+
+error('veigs:VerificationFailure', ...
+    'Could not certify the LDL residual radius for a separator.');
 end
 
 
