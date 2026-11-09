@@ -106,11 +106,7 @@ while index <= max_ind
     find_lambda = false;
     k = 0;
 
-    if index == 1
-        neg_num_low     = 0;
-        lambda_test_low = eig_test;
-    else
-        while ~find_lambda
+    while ~find_lambda
             if k > 10
                 error('Rough lower bound search exceeded iteration limit.');
             end
@@ -125,10 +121,9 @@ while index <= max_ind
             else
                 find_lambda = true;
             end
-        end
-        neg_num_low     = negative_num;
-        lambda_test_low = lambda_test;
     end
+    neg_num_low     = negative_num;
+    lambda_test_low = lambda_test;
 
     %% ------------------------------------------------------------
     % Rough upper bound
@@ -137,11 +132,7 @@ while index <= max_ind
     find_lambda = false;
     k = 0;
 
-    if index == n
-        neg_zero_num_upper = n;
-        lambda_test_upper  = eig_test;
-    else
-        while ~find_lambda
+    while ~find_lambda
             if k > 10
                 error('Rough upper bound search exceeded iteration limit.');
             end
@@ -156,10 +147,9 @@ while index <= max_ind
             else
                 find_lambda = true;
             end
-        end
-        neg_zero_num_upper = negative_num + zero_num;
-        lambda_test_upper  = lambda_test;
     end
+    neg_zero_num_upper = negative_num + zero_num;
+    lambda_test_upper  = lambda_test;
 
     %% ------------------------------------------------------------
     % Verified lower bound
