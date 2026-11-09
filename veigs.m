@@ -214,9 +214,9 @@ while do_next
         global_r = ind_range(end)+1;
 
         if direction_right == 1
-            global_rho = max(inf(lambda));
+            global_rho = max(sup(lambda));
             para = [global_r,global_s,global_rho,global_sigma, ...
-                SIGMA_min,SIGMA_max,0,direction_right];
+                0,SIGMA_max,0,direction_right];
             [local_lambda,local_ind_range_right,global_ind_range] = ...
                 veigs_EigLocalBound(A,B,eig_list,V,ind_right,var_rough_bounds,para);
             lambda = [lambda, local_lambda];
@@ -224,9 +224,9 @@ while do_next
         end
 
         if direction_left == 1
-            global_sigma = min(sup(lambda));
+            global_sigma = min(inf(lambda));
             para = [global_r,global_s,global_rho,global_sigma, ...
-                SIGMA_min,SIGMA_max,direction_left,0];
+                SIGMA_min,0,direction_left,0];
             [local_lambda,local_ind_range_left,global_ind_range] = ...
                 veigs_EigLocalBound(A,B,eig_list,V,ind_left,var_rough_bounds,para);
             lambda = [local_lambda, lambda];
