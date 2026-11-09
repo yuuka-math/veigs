@@ -159,7 +159,7 @@ while index <= max_ind
     [L,D,P] = ldl(E_mid);
     E      = A - lambda_test*B;
 
-    diff_m     = P*L*D*(L')*P' - E;
+    diff_m     = P*intval(L)*intval(D)*intval(L')*P' - E;
     diff_m_inf = norm(sup(abs(diff_m)),'inf');
 
     if diff_m_inf == 0
@@ -195,7 +195,7 @@ while index <= max_ind
     [L,D,P] = ldl(E_mid);
     E      = A - lambda_test*B;
 
-    diff_m     = P*L*D*(L')*P' - E;
+    diff_m     = P*intval(L)*intval(D)*intval(L')*P' - E;
     diff_m_inf = norm(sup(abs(diff_m)),'inf');
 
     if diff_m_inf == 0
