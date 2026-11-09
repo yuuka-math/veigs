@@ -171,8 +171,8 @@ if ~isfinite(lambda_B_min) || lambda_B_min <= 0
         'Could not certify a positive finite lower bound for B.');
 end
 A_inf_norm = norm(sup(abs(A)),'inf');
-lambda_rough_min = -A_inf_norm / lambda_B_min;
-lambda_rough_max =  A_inf_norm / lambda_B_min;
+lambda_rough_min = -size(A,1)*A_inf_norm / lambda_B_min;
+lambda_rough_max = size(A,1)*A_inf_norm / lambda_B_min;
 var_rough_bounds = [lambda_B_min, lambda_rough_min, lambda_rough_max];
 
 %%% ----------- Step 2: Determination of r and s -------------------------
@@ -336,7 +336,7 @@ if direction_right == 1
     else
         % Compare PLDL'P' vs. (A - lambda B) to estimate the interval radius
         diff_m  = P*intval(L)*intval(D)*intval(L')*P' - tmpM; % (not exactly symmetric, hull used)
-        err_est = norm( sup(abs(diff_m)),'inf') / lambda_B_min;
+        err_est = size(A,1)*norm( sup(abs(diff_m)),'inf') / lambda_B_min;
 
         % Reduce the error estimate iteratively, ensuring positivity of
         %   err_est * B - ( PLDL'P' - (A - lambda B) )
@@ -413,7 +413,7 @@ if direction_left == 1
     else
         % Error radius via difference of factorization and original
         diff_m  =  tmpM - P*intval(L)*intval(D)*intval(L')*P';
-        err_est = norm( sup(abs(diff_m)),'inf') / lambda_B_min;
+        err_est = size(A,1)*norm( sup(abs(diff_m)),'inf') / lambda_B_min;
 
         if ( err_est > (1-lambda_ratio) * ( eig_list(r) - eig_pre ) )
             is_positive = 1;
