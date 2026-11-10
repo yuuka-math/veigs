@@ -91,6 +91,21 @@ Notes
 - Designed for small-to-medium problems; performance depends on problem size and whether sparse routines (`eigs`) are applicable.
 - The code uses INTLAB interval objects and utilities (e.g. intval, mid, inf, sup, hull, isspd).
 
+## Regression tests
+
+Put your INTLAB installation on the MATLAB path, then run from this repository:
+
+```matlab
+startintlab;
+addpath('tests');
+report = run_regression_tests();
+```
+
+The suite checks exact spectra, analytic interval-family bounds, cluster expansion,
+residual-radius regressions, large finite eigenvalues, and rejection of unsafe
+scales. It prints a JSON summary, returns the same information in `report`, and
+throws an error if any check fails. It does not write report files.
+
 References
 - H. Behnke, "The calculation of Guaranteed bounds for eigenvalues using complementary variational principles", Computing 47, 11–27 (1991).
 - N. Yamamoto, "A simple method for error bounds of eigenvalues of symmetric matrices", Linear Algebra and its Applications, 234 (2001), 227–234.

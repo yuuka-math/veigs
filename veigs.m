@@ -170,9 +170,14 @@ if ~isfinite(lambda_B_min) || lambda_B_min <= 0
     error('veigs:UnsafeScale', ...
         'Could not certify a positive finite lower bound for B.');
 end
-A_inf_norm = norm(sup(abs(A)),'inf');
-lambda_rough_min = -size(A,1)*A_inf_norm / lambda_B_min;
-lambda_rough_max = size(A,1)*A_inf_norm / lambda_B_min;
+% For symmetric A, the spectral norm is bounded by the induced infinity
+% norm. Keep both the norm and division in interval arithmetic.
+lambda_rough_max = sup(norm(intval(A),'inf') / intval(lambda_B_min));
+if ~isfinite(lambda_rough_max)
+    error('veigs:UnsafeScale', ...
+        'Could not certify finite rough eigenvalue bounds.');
+end
+lambda_rough_min = -lambda_rough_max;
 var_rough_bounds = [lambda_B_min, lambda_rough_min, lambda_rough_max];
 
 %%% ----------- Step 2: Determination of r and s -------------------------
@@ -336,7 +341,13 @@ if direction_right == 1
     else
         % Compare PLDL'P' vs. (A - lambda B) to estimate the interval radius
         diff_m  = P*intval(L)*intval(D)*intval(L')*P' - tmpM; % (not exactly symmetric, hull used)
-        err_est = size(A,1)*norm( sup(abs(diff_m)),'inf') / lambda_B_min;
+        % The exact residual is symmetric even if its interval enclosure is
+        % not. Its infinity norm therefore bounds its spectral norm.
+        err_est = sup(norm(diff_m,'inf') / intval(lambda_B_min));
+        if ~isfinite(err_est)
+            error('veigs:UnsafeScale', ...
+                'Could not certify a finite LDL residual bound.');
+        end
 
         % Reduce the error estimate iteratively, ensuring positivity of
         %   err_est * B - ( PLDL'P' - (A - lambda B) )
@@ -413,7 +424,11 @@ if direction_left == 1
     else
         % Error radius via difference of factorization and original
         diff_m  =  tmpM - P*intval(L)*intval(D)*intval(L')*P';
-        err_est = size(A,1)*norm( sup(abs(diff_m)),'inf') / lambda_B_min;
+        err_est = sup(norm(diff_m,'inf') / intval(lambda_B_min));
+        if ~isfinite(err_est)
+            error('veigs:UnsafeScale', ...
+                'Could not certify a finite LDL residual bound.');
+        end
 
         if ( err_est > (1-lambda_ratio) * ( eig_list(r) - eig_pre ) )
             is_positive = 1;
@@ -522,12 +537,20 @@ end
 function [bound] = veigs_RoughLower(A,B,eig_test,eig_test_min)
 % Roughly finds a lower bound for the minimum eigenvalue by testing
 % the positive definiteness of A - λB iteratively, decreasing λ.
+if ~isfinite(eig_test) || ~isfinite(eig_test_min)
+    error('veigs:UnsafeScale', ...
+        'Rough lower-bound search requires finite endpoints.');
+end
 k = 1;
 delta  = max(eps, (eig_test - eig_test_min)/2^32);
 lambda = eig_test - delta*2^(k-1);
 is_pd  = false;
 
 while (lambda >= eig_test_min - eps) || (k == 1)
+    if ~isfinite(lambda)
+        error('veigs:UnsafeScale', ...
+            'Rough lower-bound search produced a nonfinite candidate.');
+    end
     tmpMatrix = intval(A) - lambda * intval(B);
     is_pd = isspd( hull(tmpMatrix, tmpMatrix') );
     if is_pd
@@ -551,12 +574,20 @@ end
 function [bound] = veigs_RoughUpper(A,B,eig_test,eig_test_max)
 % Roughly finds an upper bound for the maximum eigenvalue by testing
 % the positive definiteness of λB - A iteratively, increasing λ.
+if ~isfinite(eig_test) || ~isfinite(eig_test_max)
+    error('veigs:UnsafeScale', ...
+        'Rough upper-bound search requires finite endpoints.');
+end
 k = 1;
 delta  = max(eps, (eig_test_max - eig_test)/2^32);
 lambda = eig_test + delta*2^(k-1);
 is_pd  = false;
 
 while (lambda <= eig_test_max + eps) || (k == 1)
+    if ~isfinite(lambda)
+        error('veigs:UnsafeScale', ...
+            'Rough upper-bound search produced a nonfinite candidate.');
+    end
     tmpMatrix = lambda * intval(B) - intval(A);
     is_pd = isspd( hull(tmpMatrix, tmpMatrix') );
     if is_pd
